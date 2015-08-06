@@ -6,7 +6,7 @@ two authentication methods:
 - XAuth and certificates
 - PSK (Preshared Key)
 
-Note: only tested on Ubuntu 14.04.
+Note: only tested on Ubuntu 14.04, works for iOS 8 and OS X 10.10.
 
 ## Setup on server
 
