@@ -1,15 +1,22 @@
 #!/bin/bash
 
+# This script is for Ubuntu 14.04.
+
 if [[ $# != 2 ]]; then
     echo "Usage: `basename $0` <server name or ip>"
     exit 1
 fi
 
 server=$1
+
+# Note: on Debian, replace strongswan-plugin-xauth-generic with
+# libcharon-extra-plugins.
+apt-get install -y strongswan strongswan-plugin-xauth-generic
+
+# Generate certificates
+
 mkdir -p cert
 cd cert
-
-apt-get install -y strongswan strongswan-plugin-xauth-generic
 
 # CA certificate
 ipsec pki --gen --outform pem > caKey.pem
@@ -40,6 +47,14 @@ sudo cp clientKey.pem /etc/ipsec.d/private/
 cd ..
 sudo cp ./etc/* /etc/
 sudo chmod 0600 /etc/ipsec.secrets
+
+# iptables rules
+echo "Setup iptables rules."
+sudo iptables-restore <./iptables.rules
+
+# Enable ip forwarding
+echo "Enable ip forwarding, please check setting in /etc/sysctl.conf"
+sudo sysctl -w net.ipv4.ip_forward=1
 
 # Restart ipsec service
 sudo ipsec stop
